@@ -1,0 +1,98 @@
+<detalle-empleado *ngIf="empleadoSeleccionado" [empleado]="empleadoSeleccionado"></detalle-empleado>
+<h1>{{title}}</h1>
+<div class="alert alert-info" *ngIf="empleadosList?.length == 0">
+  No se han encontrado registros
+</div>
+<div class="card" *ngIf="empleadosList?.length>0 && hasRole('ROLE_ADMIN')">
+  <div class="card-header">
+    Filtros
+  </div>
+  <div class="card-body">
+    <div class="row m-b-20">
+      <div class="form-group col-md-2">
+        <label for="estadoVacunacion">Estado Vacunación</label>
+        <select name="estadoVacunacion" id="estadoVacunacion" class="form-control"
+                [(ngModel)]="filtros.estadoVacunacion">
+          <option value="">Seleccione...</option>
+          <option value="vacunado">Vacunado</option>
+          <option value="No Vacunado">No Vacunado</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label for="tipoVacuna">Tipo Vacuna</label>
+        <select name="tipoVacuna" id="tipoVacuna" class="form-control" [(ngModel)]="filtros.tipoVacuna">
+          <option value="">Seleccione...</option>
+          <option value="Sputnik">Sputnik</option>
+          <option value="AstraZeneca">AstraZeneca</option>
+          <option value="Pfizer">Pfizer</option>
+          <option value="Jhonson&Jhonson">Jhonson&Jhonson</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label for="dosis">Num. Dosis</label>
+        <input type="number" name="dosis" id="dosis" class="form-control"
+               placeholder="Num. Dosis" [(ngModel)]="filtros.dosis">
+      </div>
+
+    </div>
+    <div class="text-right">
+      <a class="btn btn-danger text-white" (click)="limpiar()">
+        Limpiar
+      </a>
+    </div>
+  </div>
+</div>
+<br>
+<div class="card mb-3" *ngIf="empleadosList?.length>0 && hasRole('ROLE_ADMIN')">
+  <div class="card-header">
+    Lista Empleados
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-table-bordered table-striped" style="max-height: 500px; overflow: auto">
+        <thead>
+        <tr>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Cédula</th>
+          <th>Estado Vacunación</th>
+          <th>Tipo Vacuna</th>
+          <th>Fecha Vacunación</th>
+          <th>Num. Dosis</th>
+          <th>Editar</th>
+          <th>Eliminar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let empleado of empleadosList | filtros:filtros.estadoVacunacion:filtros.tipoVacuna:filtros.dosis">
+          <td>{{empleado.nombres | uppercase}}</td>
+          <td>{{empleado.apellidos | uppercase}}</td>
+          <td>{{empleado.cedula}}</td>
+          <td>{{empleado.estadoVacunacion}}</td>
+          <td>{{empleado.tipoVacuna}}</td>
+          <td>{{empleado.fechaVacunacion | date: "fullDate"}}</td>
+          <td>{{empleado.numeroDosis}}</td>
+          <td>
+            <button type="button" name="detalle" (click)="abrirModal(empleado)"
+                    class="btn btn-primary btn-sm">Ver Detalle
+            </button>
+          </td>
+          <td>
+            <button type="button" name="editar" [routerLink]="['/empleados/create', empleado.id]"
+                    class="btn btn-primary btn-sm">editar
+            </button>
+          </td>
+          <td>
+            <button type="button" name="button" (click)="delete(empleado)"
+                    class="btn btn-danger btn-sm">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
